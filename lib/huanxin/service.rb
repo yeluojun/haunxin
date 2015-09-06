@@ -32,7 +32,6 @@ module Huanxin
 
     # 注册im用户(单个用户)
     def register(username, password, token = '')
-      p token
       url = "#{@host}/#{@org}/#{@app}/users"
       if token.empty?
         header = {'Content-Type': 'application/json'}
@@ -48,6 +47,12 @@ module Huanxin
         ret = ex.response
         return json(ret)
       end
+    end
+
+    # 注册用户(批量)
+    # 批量注册的用户数量不要过多, 建议在20-60之间
+    def register_s(users = {}, token)
+
     end
 
     # # 批量注册用户
