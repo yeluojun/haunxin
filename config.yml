@@ -1,0 +1,8 @@
+huanxin:
+  org: yeluojun
+  app: znlf
+  client_id: 'YXA6XiL1cJryEeSQZS-iuPOBCw'
+  client_secret: 'YXA6-QbJER719c2xsQenF_blW2WIgPU'
+  host: 'https://a1.easemob.com'
+  log_file: ""
+  log_level: warn

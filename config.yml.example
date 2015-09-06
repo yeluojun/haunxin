@@ -1,0 +1,6 @@
+huanxin:
+  app_key: app_key
+  app_secret: app_secret
+  host: 'https://theserverurl'
+  log_file: xxx/rongcloud.log
+  log_level: warn
