@@ -225,21 +225,110 @@ describe Huanxin do
     end
   end
 
-  context 'POST#blocks_add_users' do
+  # 黑名单加人和减人
+  context 'POST(DELETE)#blocks_add_users(block_remove_users) ' do
     before do
       @service.register('block_friend_owner', '123456', @token)
       @service.register('block_friend_friend', '123456', @token)
       @service.register('block_friend_friend_2', '123456', @token)
+      @service.register('block_friend_friend_3', '123456', @token)
       @service.add_friend @token, 'block_friend_owner', 'block_friend_friend'
       @service.add_friend @token, 'block_friend_owner', 'block_friend_friend_2'
+      @service.add_friend @token, 'block_friend_owner', 'block_friend_friend_3'
     end
-    it 'should rest password' do
-      ret = @service.block_add_users @token, 'remove_friend_owner'
+    it 'should block one user' do
+      ret = @service.block_add_users @token, 'block_friend_owner', 'block_friend_friend'
+      p ret
+      expect(ret['code']).to eq 200
+      expect(ret['data'].length).to eq 1
+    end
+
+    it 'should block two user' do
+      ret = @service.block_add_users @token, 'block_friend_owner', ['block_friend_friend_2', 'block_friend_friend_3']
       p ret
       expect(ret['code']).to eq 200
       expect(ret['data'].length).to eq 2
     end
+
+    it 'should remove a user from blocks' do
+      ret = @service.block_remove_users @token, 'block_friend_owner', 'block_friend_friend'
+      p ret
+      expect(ret['code']).to eq 200
+      # expect(ret['data'].length).to eq 1
+    end
   end
 
+  # 获取在线状态
+  context 'GET#online_status' do
+    before do
+      @service.register('online_status_user', '123456', @token)
+    end
+    it 'should check user online status' do
+      ret = @service.online_status @token, 'online_status_user'
+      p ret
+      expect(ret['code']).to eq 200
+      expect(ret['data']['online_status_user']).to eq 'offline'
+    end
+  end
 
+  # 获取离线消息数
+  context 'GET#get_offline_msg_count' do
+    before do
+      @service.register('get_offline_msg_count', '123456', @token)
+    end
+    it 'should get offline msg count' do
+      ret = @service.get_offline_msg_count @token, 'get_offline_msg_count'
+      p ret
+      expect(ret['code']).to eq 200
+      expect(ret['data']['get_offline_msg_count']).to eq 0
+    end
+  end
+
+  # 获取离线消息状态
+  context 'GET#force_offline_user' do
+
+
+  end
+
+  # 禁用用户和启用用户
+  context 'post#deactivate_user or active_user' do
+    before do
+      @service.register('deactivate_user', '123456', @token)
+    end
+    it 'should deactivate a  user' do
+      ret = @service.deactivate_user @token, 'deactivate_user'
+      p ret
+      expect(ret['code']).to eq 200
+    end
+
+    it 'should active_user a  user' do
+      ret = @service.activate_user @token, 'deactivate_user'
+      p ret
+      expect(ret['code']).to eq 200
+    end
+  end
+
+  # 强制用户下线
+  context 'GET#force_offline_user' do
+
+
+  end
+
+  # 导出聊天记录
+  context 'GET#export_chat_record' do
+    before do
+      @service.register('real_user', '123456', @token)
+    end
+    it 'should export chat record' do
+      ret = @service.export_chat_record @token
+      p ret
+      expect(ret['code']).to eq 200
+    end
+
+    it 'should export chat record_2' do
+      ret = @service.export_chat_record @token, 100, nil, 'select * where timestamp>1403164734226'
+      p ret
+      expect(ret['code']).to eq 200
+    end
+  end
 end

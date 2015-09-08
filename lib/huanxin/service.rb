@@ -209,9 +209,139 @@ module Huanxin
     def block_add_users(token, username, users)
       url = "#{@host}/#{@org}/#{@app}/users/#{username}/blocks/users"
       header = { Authorization: "Bearer #{token}", accept: :json }
-      params = {usernames: users}
+      if users.is_a? Array
+        params = {usernames: users}
+      else
+        data = []
+        data << users
+        params = {usernames: data}
+      end
       begin
         ret = RestClient.post url, params.to_json, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 黑名单中减人
+    def block_remove_users(token, username, blockuser)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/blocks/users/#{blockuser}"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      begin
+        ret = RestClient.delete url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 查看用户在线状态
+    def online_status(token, username)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/status"
+      header = { Authorization: "Bearer #{token}", accept: :json, 'Content-Type': 'application/json' }
+      begin
+        ret = RestClient.get url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 查看用户的离线消息数
+    def get_offline_msg_count(token, username)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/offline_msg_count"
+      header = { Authorization: "Bearer #{token}", accept: :json, 'Content-Type': 'application/json' }
+      begin
+        ret = RestClient.get url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 查看离线消息的状态
+    # 通过离线消息的id查看用户的该条离线消息状态
+    def offline_msg_status(token, username, msgid)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/offline_msg_status/#{msgid}"
+      header = { Authorization: "Bearer #{token}", accept: :json, 'Content-Type': 'application/json'  }
+      begin
+        ret = RestClient.get url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 禁用某个用户账号
+    def deactivate_user(token, username)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/deactivate"
+      header = { Authorization: "Bearer #{token}", accept: :json, 'Content-Type': 'application/json' }
+      begin
+        ret = RestClient.post url,{}, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 激活用户账号
+    def activate_user(token, username)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/activate"
+      header = { Authorization: "Bearer #{token}", accept: :json, 'Content-Type': 'application/json' }
+      begin
+        ret = RestClient.post url,{}, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 强制用户下线
+    def force_offline_user(token, username)
+      url = "#{@host}/#{@org}/#{@app}/users/#{username}/disconnect"
+      header = { Authorization: "Bearer #{token}", accept: :json, 'Content-Type': 'application/json' }
+      begin
+        ret = RestClient.get url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 导出聊天记录
+    # 消息的数据结构详情请访问下面的网站
+    # http://docs.easemob.com/doku.php?id=start:100serverintegration:30chatlog
+    def export_chat_record(token, limit=10, cursor = nil, sq = nil)
+      url = "#{@host}/#{@org}/#{@app}/chatmessages"
+      params = {limit: limit}
+      unless cursor == nil
+        params.merge!({cursor: cursor})
+      end
+      unless sq == nil
+        params.merge!({ql: URI::encode(sq)})
+      end
+      p params
+
+      header = { Authorization: "Bearer #{token}", accept: :json , params: params }
+      begin
+        ret = RestClient.get(url, header)
         return json ret
       rescue => ex
         $logger.error(ex.response.inspect)
