@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["yeluojun"]
   spec.email         = ["635143970@qq.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = 'huanxin'
+  spec.description   = 'huanxin rest api'
   spec.homepage      = "https://github.com/yeluojun/haunxin"
   spec.license       = "MIT"
 
@@ -33,5 +33,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.10"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rspec", '~> 3.0'
 end

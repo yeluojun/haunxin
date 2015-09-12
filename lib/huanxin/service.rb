@@ -350,6 +350,14 @@ module Huanxin
       end
     end
 
+
+    # 群组管理
+    # 获取群组
+    def get_groups(token)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups"
+    end
+
+
     private
 
     def json(ret)
