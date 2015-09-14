@@ -6,10 +6,9 @@ TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
-
 ```ruby
 # 基本配置
-# rails_app/config/initializers/rongcloud.rb
+# rails_app/config/initializers/huanxin.rb
 Huanxin.configure do |config|
   config.app_key = ''
   config.app_secret = ''
@@ -22,8 +21,6 @@ huanxin = Huanxin::Service.new
 
 ## 获取token
 token = huanxin.get_token
-
-
 
 Add this line to your application's Gemfile:
 
