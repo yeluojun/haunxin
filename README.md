@@ -1,10 +1,29 @@
 # Huanxin
-
+环信 ruby sdk.
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/huanxin`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 TODO: Delete this and the text above, and describe your gem
 
 ## Installation
+
+
+```ruby
+# 基本配置
+# rails_app/config/initializers/rongcloud.rb
+Huanxin.configure do |config|
+  config.app_key = ''
+  config.app_secret = ''
+  config.host = ''
+  config.log_level = :warn
+  config.log_file = "#{Rails.root}/log/Huanxin.log"
+end
+
+huanxin = Huanxin::Service.new
+
+## 获取token
+token = huanxin.get_token
+
+
 
 Add this line to your application's Gemfile:
 
