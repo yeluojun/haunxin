@@ -10,9 +10,11 @@ TODO: Delete this and the text above, and describe your gem
 # 基本配置
 # rails_app/config/initializers/huanxin.rb
 Huanxin.configure do |config|
-  config.app_key = ''
-  config.app_secret = ''
-  config.host = ''
+  config.org = ''
+  config.app = ''
+  config.host = 'https://a1.easemob.com'
+  config.client_id = ''
+  config.client_secret = ''
   config.log_level = :warn
   config.log_file = "#{Rails.root}/log/Huanxin.log"
 end
