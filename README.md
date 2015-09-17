@@ -27,7 +27,7 @@ token = huanxin.get_token
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'huanxin'
+gem 'huanxin', github: 'yeluojun/haunxin'
 ```
 
 And then execute:
