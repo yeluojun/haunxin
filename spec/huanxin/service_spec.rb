@@ -331,4 +331,87 @@ describe Huanxin do
       expect(ret['code']).to eq 200
     end
   end
+
+  # 创建群组
+  context 'post # create_group' do
+    before do
+      @service.register('create_group_dmin', '123456', @token)
+      @service.register('create_group_number_one', '123456', @token)
+      @service.register('create_group_number_two', '123456', @token)
+    end
+    it 'should create a group with no user' do
+      params = {
+        groupname:"yeluojun_create_one",
+        desc: "测试创建一个群组",
+        public: true,
+        maxusers: 300,
+        approval: true,
+        owner: "create_group_dmin"
+      }
+      ret = @service.create_group @token, params
+      p ret
+      expect(ret['code']).to eq 200
+    end
+
+    it 'should create a group with two users' do
+      params = {
+        groupname:"create_group_number_one",
+        desc: "测试创建一个群组",
+        public: true,
+        maxusers: 300,
+        approval: true,
+        owner: "create_group_dmin",
+        members: ["create_group_dmin", "create_group_number_two"]
+      }
+      ret = @service.create_group @token, params
+      p ret
+      expect(ret['code']).to eq 200
+    end
+  end
+
+  # 获取群组, 更新群组, 删除群组
+  context 'Get put ,delete # get_groups, get group_users, update_group, delete_group' do
+    it 'should get groups ' do
+      @service.register('get_group_user1', '123456', @token)
+      @service.register('get_group_user2', '123456', @token)
+      @service.register('get_group_user3', '123456', @token)
+
+      # 获取群组
+      g_ret = @service.get_groups(@token)
+      p g_ret
+      expect(g_ret['code']).to eq 200
+
+      # 获取群组的成员
+      g_g_u_r = @service.get_group_usrs @token, g_ret['data'][0]['groupid']
+      p g_g_u_r
+      expect(g_g_u_r['code']).to eq 200
+
+      # 更新群组信息
+      update_params = {
+        "groupname": "diulei2",
+        "description": "it is a test !diulei",
+        "maxusers": 300
+      }
+      ret = @service.update_group @token, g_ret['data'][0]['groupid'], update_params
+      p ret
+      expect(ret['code']).to eq 200
+
+      # 群组加人单个
+      ret_add_user = @service.group_add_user @token, g_ret['data'][0]['groupid'], 'get_group_user1'
+      p ret_add_user
+      expect(ret['code']).to eq 200
+
+      # 群组加人多个
+      ret_add_users = @service.group_add_users @token, g_ret['data'][0]['groupid'], ['get_group_user2', 'get_group_user3']
+      p ret_add_users
+      expect(ret['code']).to eq 200
+
+      # 删除一个群组
+      # ret = @service.destroy_group @token, g_ret['data'][0]['groupid']
+      # p ret
+      # expect(ret['code']).to eq 200
+    end
+  end
+
+
 end

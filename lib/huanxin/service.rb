@@ -332,12 +332,11 @@ module Huanxin
       url = "#{@host}/#{@org}/#{@app}/chatmessages"
       params = {limit: limit}
       unless cursor == nil
-        params.merge!({cursor: cursor})
+        params.merge!({ cursor: cursor })
       end
       unless sq == nil
-        params.merge!({ql: URI::encode(sq)})
+        params.merge!({ ql: URI::encode(sq) })
       end
-      p params
 
       header = { Authorization: "Bearer #{token}", accept: :json , params: params }
       begin
@@ -351,12 +350,131 @@ module Huanxin
     end
 
 
+    # ###########################################以下未测试#######################################################
+
     # 群组管理
     # 获取群组
-    def get_groups(token)
+    # limit: 限制获取的数量
+    # cursor: 游标
+    def get_groups(token, cursor = nil, limit = nil)
       url = "#{@host}/#{@org}/#{@app}/chatgroups"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      if limit != nil
+        header.merge!({ limit: limit })
+      end
+      if cursor != nil
+        header.merge!({ cursor: cursor })
+      end
+
+      begin
+        ret = RestClient.get(url, header)
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
     end
 
+    # 创建群组
+    def create_group(token, group_params)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+
+      group_private_or_not = group_params[:group_private_or_not] || true  # 默认为公开群，
+      maxusers = group_params[:maxusers] || 300  # 群组成员最大数(包括群主),默认值300,可选
+      approval = group_params[:approval] || true  # 默认需要群组批准, 可选
+
+      params = {
+        groupname: group_params[:groupname],  # 群组名称, 此属性为必须的
+        desc: group_params[:desc],  # 群组描述, 此属性为必须的
+        public: group_private_or_not,
+        maxusers: maxusers,
+        approval: approval,
+        owner: group_params[:owner]  # 群组的管理员, 此属性为必须的
+      }
+      begin
+        ret = RestClient.post url, params.to_json, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 修改群组信息
+    def update_group(token, group_id, group_msg_params)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups/#{group_id}"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      begin
+        ret = RestClient.put url, group_msg_params.to_json, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 删除群组
+    def destroy_group(token, group_id)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups/#{group_id}"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      begin
+        ret = RestClient.delete url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 获取群组的所有成员
+    def get_group_usrs(token, group_id)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups/#{group_id}/users"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      begin
+        ret = RestClient.get url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 群组加人
+    def group_add_user(token, group_id, username)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups/#{group_id}/users/#{username}"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      begin
+        ret = RestClient.post url, {}, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
+    # 群组加人，批量
+    def group_add_users(token, group_id, users)
+      url = "#{@host}/#{@org}/#{@app}/chatgroups/#{group_id}/users"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+      params = {
+        usernames: users
+      }
+      begin
+        ret = RestClient.post url, params.to_json, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
 
     private
 
@@ -369,5 +487,6 @@ module Huanxin
     def url_encode(str)
       return str.gsub!(/[^\w$&\-+.,\/:;=?@]/) { |x| x = format("%%%x", x[0]) }
     end
+
   end
 end
