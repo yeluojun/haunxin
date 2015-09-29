@@ -406,6 +406,11 @@ describe Huanxin do
       p ret_add_users
       expect(ret['code']).to eq 200
 
+      # 群组减人
+      ret_remove_users = @service.group_remove_users @token, g_ret['data'][0]['groupid'], ['get_group_user2', 'get_group_user3']
+      p ret_remove_users
+      expect(ret['code']).to eq 200
+
       # 删除一个群组
       # ret = @service.destroy_group @token, g_ret['data'][0]['groupid']
       # p ret

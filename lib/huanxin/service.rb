@@ -350,8 +350,6 @@ module Huanxin
     end
 
 
-    # ###########################################以下未测试#######################################################
-
     # 群组管理
     # 获取群组
     # limit: 限制获取的数量
@@ -475,6 +473,35 @@ module Huanxin
         return json(ret)
       end
     end
+
+    # 群组减人(单个多个均可)
+    def group_remove_users(token, group_id, users)
+      user_s = []
+      user_names = ''
+      if users.is_a? Array
+        user_s = users
+      else
+        user_s << users
+      end
+
+      # 用户
+      user_s.each do |user|
+        user_names += user + ','
+      end
+
+      url = "#{@host}/#{@org}/#{@app}/chatgroups/#{group_id}/users/#{user_names.chop!}"
+      header = { Authorization: "Bearer #{token}", accept: :json }
+
+      begin
+        ret = RestClient.delete url, header
+        return json ret
+      rescue => ex
+        $logger.error(ex.response.inspect)
+        ret = ex.response
+        return json(ret)
+      end
+    end
+
 
     private
 
